@@ -1,8 +1,8 @@
 # DatacenterDetector
+This Gem wouldn't be possble without the work done here : https://incolumitas.com/pages/Datacenter-IP-API/
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/datacenter_detector`. To experiment with that code, run `bin/console` for an interactive prompt.
+To experiment with DatacenterDetector, run `bin/console` for an interactive prompt.
 
-TODO: Delete this and the text above, and describe your gem
 
 ## Installation
 
@@ -16,7 +16,14 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+> client = DatacenterDetector::Client.new
+> result = client.query(ip: '1.1.1.1')
+> result.is_datacenter
+=> false
+> result.name
+=> "CLOUDFLARENET, US"
+```
 
 ## Development
 
