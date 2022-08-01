@@ -34,6 +34,10 @@ module DatacenterDetector
           "INSERT INTO #{table} (cidr, start, finish, is_datacenter, name, response, retreived_at, created_at)  VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)", record
         )
       end
+    rescue IPAddr::AddressFamilyError => e
+      puts "Exception #{e.inspect}"
+      puts "CIDR: #{cidr}"
+      puts "Result: #{result}"
     end
 
     def get(ip:, force: false)
