@@ -3,7 +3,7 @@
 
 require "bundler/setup"
 require "datacenter_detector"
-require 'byebug'
+require "byebug"
 
 abort if ARGV[0].nil?
 
