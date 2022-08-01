@@ -7,6 +7,10 @@ class TestDatacenterDetector < Minitest::Test
     refute_nil ::DatacenterDetector::VERSION
   end
 
+  def test_loopback_dont_break_it
+    ddc_query = DatacenterDetector::Client.new.query(ip: '127.0.0.1')
+  end
+
   def test_it_parses_result
     hash = { cidr: "3.5.140.0/22",
              name: "Amazon AWS",

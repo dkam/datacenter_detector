@@ -22,6 +22,12 @@ module DatacenterDetector
                end
     response.is_datacenter = response.result.is_datacenter
     response.name = response.result.server || response.result.datacenter || response.result.asn&.descr
+
+    if ip == '127.0.0.1'
+      response.result.cidr = '127.0.0.1/8'
+      response.result.server = 'Loopback'
+    end
+
     response
   end
 
