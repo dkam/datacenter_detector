@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/setup"
+require "datacenter_detector"
+require 'byebug'
+
+abort if ARGV[0].nil?
+
+puts DatacenterDetector.to_hash(DatacenterDetector::Client.new.query(ip: ARGV[0])).to_json
