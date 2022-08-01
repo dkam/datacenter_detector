@@ -1,6 +1,8 @@
 # DatacenterDetector
 This Gem wouldn't be possble without the work done here : https://incolumitas.com/pages/Datacenter-IP-API/
 
+The gem caches responses in SQLite.
+
 To experiment with DatacenterDetector, run `bin/console` for an interactive prompt.
 
 
@@ -23,6 +25,18 @@ If bundler is not being used to manage dependencies, install the gem by executin
 => false
 > result.name
 => "CLOUDFLARENET, US"
+
+> result = client.query(ip: '52.93.127.126')
+> result.is_datacenter
+=> true
+> result.name
+=> "Amazon AWS"
+
+> result = client.query(ip: '27.32.20.97' )
+> result.is_datacenter
+=> false
+> result.name
+=> "TPG-INTERNET-AP TPG Telecom Limited, AU"
 ```
 
 ## Development
