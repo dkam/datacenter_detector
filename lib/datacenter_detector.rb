@@ -11,7 +11,7 @@ module DatacenterDetector
   # Your code goes here...
 
   def self.query(ip)
-    data = URI.open(url(ip))
+    data = URI.open(url(ip), "User-Agent" => "DatacenterDetector/#{::DatacenterDetector::VERSION} (https://github.com/dkam/datacenter_detector)")
     body = data.read
     doc = JSON.parse(body)
     result = { status: data.status[0] }
