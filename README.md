@@ -1,7 +1,7 @@
 # DatacenterDetector
 This Gem wouldn't be possble without the work done here : https://incolumitas.com/pages/Datacenter-IP-API/
 
-The gem caches responses in SQLite.
+The gem caches responses, including the supplied network, in SQLite. 
 
 To experiment with DatacenterDetector, run `bin/console` for an interactive prompt.
 
