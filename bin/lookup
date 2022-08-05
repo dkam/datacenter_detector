@@ -7,4 +7,4 @@ require "byebug"
 
 abort if ARGV[0].nil?
 
-puts DatacenterDetector.to_hash(DatacenterDetector::Client.new.query(ip: ARGV[0])).to_json
+puts JSON.pretty_generate( DatacenterDetector.to_hash(DatacenterDetector::Client.new.query(ip: ARGV[0])))
