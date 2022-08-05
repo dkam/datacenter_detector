@@ -44,4 +44,27 @@ class TestDatacenterDetector < Minitest::Test
 
     DatacenterDetector.to_hash(JSON.parse(str))
   end
+
+  def test_no_asn_result
+    response = {
+      status: "200",
+      result: {
+        ip: "5.255.253.156",
+        is_datacenter: false,
+        rir: "ripe ncc",
+        asn: nil,
+        location: {
+          country: "ru"
+        },
+        elapsed_ms: 38.56
+      },
+      is_datacenter: false,
+      name: nil
+    }
+    response = DatacenterDetector.to_ostruct(response)
+    
+    cache = DatacenterDetector::Cache.new()
+
+    cache.add(response.result)
+  end
 end

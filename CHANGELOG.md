@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.3.0] - 2022-08-05
+
+- Handle response with no network found
+
 ## [0.2.0] - 2022-08-01
 
 - Add a User Agent
