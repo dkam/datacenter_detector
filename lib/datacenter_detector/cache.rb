@@ -11,11 +11,34 @@ module DatacenterDetector
       setup_range
       setup_range6
       setup_agents
-
+      setup_cache_counter
     end
 
     def hitrate
-      @hit_count / ( @hit_count + @miss_count).to_f
+      hit = get_counter('hit')
+      miss = get_counter('miss')
+
+      hit / (hit + miss).to_f
+    end
+
+    def hit!
+      increment('hit')
+    end
+
+    def miss!
+      increment('miss')
+    end
+
+    def increment(counter)
+      @db.transaction do |d|
+        d.execute(
+          "UPDATE cache_counter SET value=value + 1 WHERE name=?", counter
+        )
+      end
+    end
+
+    def get_counter(counter)
+      return @db.execute( "select value from cache_counter where name = ?", counter )&.first&.first
     end
 
     def add(result)
@@ -66,12 +89,8 @@ module DatacenterDetector
                ).first
              end
 
-      if resp.nil?
-        @miss_count +=1
-        return nil 
-      end
-
-      @hit_count += 1
+      miss! and return nil  if resp.nil?
+      hit!
 
       resp = { cidr: resp[0], name: resp[1], is_datacenter: (resp[2] == 1), retreived_at: resp[3], created_at: resp[4],
                result: resp[5], status: 301 }
@@ -107,6 +126,14 @@ module DatacenterDetector
       @db.execute("CREATE TABLE agents(name VARCHAR, full  VARCHAR, quality INTEGER);")
       @db.execute("CREATE UNIQUE INDEX 'uniq_name'  ON agents ( 'name' );")
       @db.execute("CREATE INDEX 'idx_agent_quality' ON ranges ( 'quality' );")
+    end
+
+    def setup_cache_counter
+      return unless @db.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='cache_counter'").length == 0
+
+      @db.execute("CREATE TABLE cache_counter(name VARCHAR, value INTEGER);")
+      @db.execute("INSERT INTO cache_counter (name, value)  VALUES ('hit', 0)")
+      @db.execute("INSERT INTO cache_counter (name, value)  VALUES ('miss', 0)")
     end
 
     def self.default_database_file
