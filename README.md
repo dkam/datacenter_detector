@@ -39,6 +39,13 @@ If bundler is not being used to manage dependencies, install the gem by executin
 => "TPG-INTERNET-AP TPG Telecom Limited, AU"
 ```
 
+The client records its cache's hitrate:
+
+```ruby
+> c.hitrate
+=> 0.6829268292682927
+```
+
 ## TODO
 Networks are cached by finding the first and last IP in the range and converting them to integers. This library does not detect overlapping networks.
 

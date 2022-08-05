@@ -1,7 +1,7 @@
 ## [Unreleased]
 
 ## [0.3.0] - 2022-08-05
-
+- Store hit / miss data in sqlite to allow a hitrate score
 - Handle response with no network found
 
 ## [0.2.0] - 2022-08-01
