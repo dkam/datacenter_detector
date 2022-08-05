@@ -1,7 +1,12 @@
 module DatacenterDetector
   class Client
+    attr_reader :cache
     def initialize(dbf: nil)
       @cache = Cache.new(dbf: dbf)
+    end
+
+    def hitrate
+      @cache.hitrate
     end
 
     def query(ip:, force: false)

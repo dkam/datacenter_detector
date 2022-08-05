@@ -1,12 +1,21 @@
 require "sqlite3"
 module DatacenterDetector
   class Cache
+    attr_accessor :hit_count, :miss_count
+
     def initialize(dbf: Cache.default_database_file)
+      @hit_count = 0
+      @miss_count = 0
       @db = SQLite3::Database.new dbf || Cache.default_database_file
       @db.busy_timeout = 100
       setup_range
       setup_range6
       setup_agents
+
+    end
+
+    def hitrate
+      @hit_count / ( @hit_count + @miss_count).to_f
     end
 
     def add(result)
@@ -57,7 +66,12 @@ module DatacenterDetector
                ).first
              end
 
-      return nil if resp.nil?
+      if resp.nil?
+        @miss_count +=1
+        return nil 
+      end
+
+      @hit_count += 1
 
       resp = { cidr: resp[0], name: resp[1], is_datacenter: (resp[2] == 1), retreived_at: resp[3], created_at: resp[4],
                result: resp[5], status: 301 }
