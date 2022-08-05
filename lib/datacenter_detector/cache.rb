@@ -125,7 +125,7 @@ module DatacenterDetector
 
       @db.execute("CREATE TABLE agents(name VARCHAR, full  VARCHAR, quality INTEGER);")
       @db.execute("CREATE UNIQUE INDEX 'uniq_name'  ON agents ( 'name' );")
-      @db.execute("CREATE INDEX 'idx_agent_quality' ON ranges ( 'quality' );")
+      @db.execute("CREATE INDEX 'idx_agent_quality' ON agents ( 'quality' );")
     end
 
     def setup_cache_counter
