@@ -1,10 +1,11 @@
 # DatacenterDetector
+Use the Gem to determine if an IP Address belongs to a  datacenter network range. Response will usually include the CIDR of the queried network the IP belongs to. 
+
 This Gem wouldn't be possble without the work done here : https://incolumitas.com/pages/Datacenter-IP-API/
 
-The gem caches responses, including the supplied netblock, in SQLite. Subsequent lookups which are within the same netblock will be cached. 
+Responses are cached, including the supplied netblock, in SQLite. Subsequent lookups which are within the same netblock will be cached. 
 
 To experiment with DatacenterDetector, run `bin/console` for an interactive prompt.
-
 
 ## Installation
 
@@ -39,7 +40,7 @@ If bundler is not being used to manage dependencies, install the gem by executin
 => "TPG-INTERNET-AP TPG Telecom Limited, AU"
 ```
 
-The client records its cache's hitrate:
+The cache records its hitrate:
 
 ```ruby
 > c.hitrate

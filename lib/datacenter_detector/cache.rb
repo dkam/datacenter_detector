@@ -134,6 +134,8 @@ module DatacenterDetector
       @db.execute("CREATE TABLE cache_counter(name VARCHAR, value INTEGER);")
       @db.execute("INSERT INTO cache_counter (name, value)  VALUES ('hit', 0)")
       @db.execute("INSERT INTO cache_counter (name, value)  VALUES ('miss', 0)")
+    rescue SQLite3::SQLException => e
+      puts "Exception creating cache_counter: #{e.inspect}"
     end
 
     def self.default_database_file
