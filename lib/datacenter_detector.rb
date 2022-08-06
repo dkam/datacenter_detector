@@ -35,6 +35,7 @@ module DatacenterDetector
     "https://api.incolumitas.com/datacenter?ip=#{ip}"
   end
 
+  # Recursively convert an object into an OpenStruct
   def self.to_ostruct(obj)
     obj = JSON.parse(obj) if obj.is_a?(String) && obj.valid_json?
 
@@ -47,6 +48,7 @@ module DatacenterDetector
     end
   end
 
+  # Recursively convert an OpenStruct into a Hash
   def self.to_hash(obj)
     if obj.is_a?(OpenStruct)
       obj.to_h.transform_values { |v| DatacenterDetector.to_hash(v) }

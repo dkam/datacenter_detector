@@ -48,7 +48,8 @@ The cache records its hitrate:
 ```
 
 ## TODO
-Networks are cached by finding the first and last IP in the range and converting them to integers. This library does not detect overlapping networks.
+ - Networks are cached by finding the first and last IP in the range and converting them to integers. This library does not detect overlapping networks.
+ - Move the remaining client / connect code into the Client class.
 
 ## Development
 
