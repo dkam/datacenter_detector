@@ -7,8 +7,7 @@ require "open-uri"
 require "json"
 
 module DatacenterDetector
-  class Error < StandardError; end
-  # Your code goes here...
+  class ServerError < StandardError; end
 
   def self.query(ip)
     data = URI.open(url(ip), "User-Agent" => "DatacenterDetector/#{::DatacenterDetector::VERSION} (https://github.com/dkam/datacenter_detector)")
@@ -29,6 +28,8 @@ module DatacenterDetector
     end
 
     response
+  rescue OpenURI::HTTPError => e
+    raise DatacenterDetector::ServerError
   end
 
   def self.url(ip)
