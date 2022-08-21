@@ -74,6 +74,8 @@ module DatacenterDetector
     end
 
     def get(ip:, force: false)
+      return nil if force
+
       a = IPAddr.new(ip)
       resp = if a.ipv6?
                @db.execute(
@@ -89,7 +91,7 @@ module DatacenterDetector
                ).first
              end
 
-      miss! and return nil  if resp.nil?
+      miss! and return nil if resp.nil?
       hit!
 
       resp = { cidr: resp[0], name: resp[1], is_datacenter: (resp[2] == 1), retreived_at: resp[3], created_at: resp[4],
