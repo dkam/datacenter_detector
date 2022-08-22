@@ -67,4 +67,17 @@ class TestDatacenterDetector < Minitest::Test
 
     cache.add(response.result)
   end
+
+  def test_convert_network_range_to_cidr
+    test_cases = [
+      "195.201.0.0 - 195.201.255.255" => IPAddr.new("195.201.0.0").tap {|i| i.prefix = 16}
+    ]
+    test_cases.each do |tc|
+      range, cidr = tc.first
+      assert cidr == DatacenterDetector.to_cidr(range)
+    end
+    
+    [ "119.17.144.0/20", "192.168.0.0/16"
+    ].each { |tc| assert IPAddr.new(tc) == DatacenterDetector.to_cidr(tc) }
+  end
 end

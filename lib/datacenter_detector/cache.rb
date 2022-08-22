@@ -45,7 +45,7 @@ module DatacenterDetector
       result = result.result if result.respond_to?(:result)
       cidr = result.cidr || result.asn&.cidr
       return if cidr.nil?
-      network = IPAddr.new(cidr)
+      network = DatacentorDetector.to_cidr(cidr)
 
       if network.ipv6?
         table  = "ranges6"

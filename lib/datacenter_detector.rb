@@ -7,6 +7,9 @@ require "open-uri"
 require "json"
 
 module DatacenterDetector
+  IP_RE = /\d+\.\d+\.\d+\.\d+/
+  CIDR_RE = /\d+\.\d+\.\d+\.\d+\/\d+/
+
   class ServerError < StandardError; end
 
   def self.query(ip)
@@ -56,6 +59,17 @@ module DatacenterDetector
     else
       obj
     end
+  end
+
+  def self.to_cidr(range)
+    return IPAddr.new(range) if range.match?(CIDR_RE)
+
+    first, last = range.scan(IP_RE)
+    first = IPAddr.new(first)
+    last  = IPAddr.new( last)
+
+    first.prefix -= 1 while !first.include?(last)
+    first
   end
 end
 
