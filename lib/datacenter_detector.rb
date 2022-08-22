@@ -11,8 +11,6 @@ module DatacenterDetector
   CIDR_RE = /\d+\.\d+\.\d+\.\d+\/\d+/
 
   class ServerError < StandardError; end
-  class UnknownError < StandardError; end
-
 
   def self.query(ip)
     data = URI.open(url(ip), "User-Agent" => "DatacenterDetector/#{::DatacenterDetector::VERSION} (https://github.com/dkam/datacenter_detector)")
@@ -35,8 +33,6 @@ module DatacenterDetector
     response
   rescue OpenURI::HTTPError => e
     raise DatacenterDetector::ServerError, "Message: #{e.message}"
-  rescue IPAddr::InvalidAddressError => e 
-    raise DatacenterDetector::UnknownError, "Message: #{e.message}"
   end
 
   def self.url(ip)
