@@ -1,5 +1,14 @@
 ## [Unreleased]
 
+## [0.4.2] - 2022-08-22
+- "More robust handling for CIDR - sometimes they're returned as x.x.x.x - y.y.y.y"
+
+## [0.4.1] - 2022-08-22
+- Honour `force` in DatacenterDetector#query
+
+## [0.4.0] - 2022-08-05
+- Store and retreive cache's hitrate.  
+- Bug fixes
 ## [0.3.0] - 2022-08-05
 - Store hit / miss data in sqlite to allow a hitrate score
 - Handle response with no network found
