@@ -1,5 +1,5 @@
 ## [Unreleased]
-## [0.4.3] - 2022-09-05
+## [0.4.4] - 2022-09-05
 - "When we get an exception accessing the cache, return nil, not []
 - Allow setting SQLite's busy_timout by env and default to 500, not 100
 ## [0.4.2] - 2022-08-22
