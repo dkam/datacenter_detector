@@ -1,5 +1,7 @@
 ## [Unreleased]
-
+## [0.4.3] - 2022-09-05
+- "When we get an exception accessing the cache, return nil, not []
+- Allow setting SQLite's busy_timout by env and default to 500, not 100
 ## [0.4.2] - 2022-08-22
 - "More robust handling for CIDR - sometimes they're returned as x.x.x.x - y.y.y.y"
 

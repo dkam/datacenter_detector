@@ -7,7 +7,7 @@ module DatacenterDetector
       @hit_count = 0
       @miss_count = 0
       @db = SQLite3::Database.new dbf || Cache.default_database_file
-      @db.busy_timeout = 100
+      @db.busy_timeout = ENV.fetch('sqlite_busy_timout', 500)
       setup_range
       setup_range6
       setup_agents
@@ -101,7 +101,7 @@ module DatacenterDetector
     rescue StandardError => e
       puts "Exception finding ip: #{ip}"
       puts e.message
-      []
+      nil
     end
 
     def setup_range
