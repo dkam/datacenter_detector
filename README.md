@@ -1,7 +1,7 @@
 # DatacenterDetector
-Use the Gem to determine if an IP Address belongs to a  datacenter network range. Response will usually include the CIDR of the queried network the IP belongs to. 
+This Ruby Gem is a slim wrapper around the [Datacenter IP Address API](https://incolumitas.com/pages/Datacenter-IP-API/)
 
-This Gem wouldn't be possble without the work done here : https://incolumitas.com/pages/Datacenter-IP-API/
+Use the Gem to determine if an IP Address belongs to a  datacenter network range. Response will usually include the CIDR of the queried network the IP belongs to. 
 
 Responses are cached, including the supplied netblock, in SQLite. Subsequent lookups which are within the same netblock will be cached. 
 
