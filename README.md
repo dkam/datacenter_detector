@@ -1,6 +1,10 @@
 # DatacenterDetector
 The DatacenterDetector gem is no more. Below is a simple class to perform the same actions, but using a Redis cache via Kredis.
 
+The following Ruby class is a slim wrapper around the [IP Address API](https://github.com/NikolaiT/IP-Address-API).
+
+The number of hits and misses is also tracked.
+
 # A Working Cache
 
 ```ruby
@@ -29,13 +33,18 @@ class IpAddressApi
 
     {hit: hit, miss:, total: hit + miss}
   end
-  def self.stats = IpAddressApi.new.stats
+
+  def hitrate
+    hit  = hit_counter.value
+    miss = miss_counter.value
+    
+    hit / (hit + miss).to_f
+  end
 
   def reset_stats
     hit_counter.reset
     miss_counter.reset
   end
-  def self.reset_stats = IpAddressApi.new.reset_stats
 
   def lookup(ip=nil)
     return {} if ip.nil?
@@ -58,11 +67,13 @@ class IpAddressApi
     return {}
   end
 
-  def self.prefix = 'IpAddressApi_'
-  def self.agent = "Ruby/#{RUBY_VERSION}"
-  def self.lookup(ip=nil, cache_only: false, agent: nil)
-    IpAddressApi.new(cache_only:, agent:).lookup(ip)
-  end
+  def self.prefix      = 'IpAddressApi_'
+  def self.agent       = "Ruby/#{RUBY_VERSION}"
+  def self.stats       = IpAddressApi.new.stats
+  def self.reset_stats = IpAddressApi.new.reset_stats
+  def self.hitrate     = IpAddressApi.new.hit_rate
+
+  def self.lookup(ip=nil, cache_only: false, agent: nil) = IpAddressApi.new(cache_only:, agent:).lookup(ip)
 
   private
   def hit!         = hit_counter.increment
@@ -72,30 +83,28 @@ end
 
 ## Usage
 
-```ruby
-> IpAddressApi.lookup('1.1.1.1')
-> result.is_datacenter
-=> false
-> result.name
-=> "CLOUDFLARENET, US"
+You can use an instance or class methods.
 
-> IpAddressApi.lookup(ip: '52.93.127.126')
+```ruby
+> result = IpAddressApi.lookup('1.1.1.1')
+> result.dig('is_datacenter')
+=> false
+> result.dig('company', 'name')
+=> "APNIC Research and Development"
+> result.dig('asn', 'org')
+=> "Cloudflare, Inc."
+
+> client = IpAddressApi.new
+> client.lookup('52.93.127.126')
 > result.is_datacenter
 => true
 > result.name
-=> "Amazon AWS"
-
-> IpAddressApi.lookup(ip: '27.32.20.97' )
-> result.is_datacenter
-=> false
-> result.name
-=> "TPG-INTERNET-AP TPG Telecom Limited, AU"
-```
+=> "Amazon Technologies Inc."
 
 The cache records its hitrate:
 
 ```ruby
-> c.hitrate
+> client.hitrate
 => 0.6829268292682927
 ```
 ## License

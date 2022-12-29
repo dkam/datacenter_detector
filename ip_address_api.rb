@@ -23,13 +23,18 @@ class IpAddressApi
 
     {hit: hit, miss:, total: hit + miss}
   end
-  def self.stats = IpAddressApi.new.stats
+
+  def hitrate
+    hit  = hit_counter.value
+    miss = miss_counter.value
+    
+    hit / (hit + miss).to_f
+  end
 
   def reset_stats
     hit_counter.reset
     miss_counter.reset
   end
-  def self.reset_stats = IpAddressApi.new.reset_stats
 
   def lookup(ip=nil)
     return {} if ip.nil?
@@ -52,11 +57,13 @@ class IpAddressApi
     return {}
   end
 
-  def self.prefix = 'IpAddressApi_'
-  def self.agent = "Ruby/#{RUBY_VERSION}"
-  def self.lookup(ip=nil, cache_only: false, agent: nil)
-    IpAddressApi.new(cache_only:, agent:).lookup(ip)
-  end
+  def self.prefix      = 'IpAddressApi_'
+  def self.agent       = "Ruby/#{RUBY_VERSION}"
+  def self.stats       = IpAddressApi.new.stats
+  def self.reset_stats = IpAddressApi.new.reset_stats
+  def self.hitrate     = IpAddressApi.new.hit_rate
+
+  def self.lookup(ip=nil, cache_only: false, agent: nil) = IpAddressApi.new(cache_only:, agent:).lookup(ip)
 
   private
   def hit!         = hit_counter.increment
