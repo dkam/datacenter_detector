@@ -1,39 +1,91 @@
 # DatacenterDetector
-This Ruby Gem is a slim wrapper around the [Datacenter IP Address API](https://incolumitas.com/pages/Datacenter-IP-API/)
+The DatacenterDetector gem is no more. Below is a simple class to perform the same actions, but using a Redis cache via Kredis.
 
-Use the Gem to determine if an IP Address belongs to a  datacenter network range. Response will usually include the CIDR of the queried network the IP belongs to. 
+# A Working Cache
 
-Responses are cached, including the supplied netblock, in SQLite. Subsequent lookups which are within the same netblock will be cached. 
+```ruby
+require 'kredis'
+require 'open-uri'
 
-To experiment with DatacenterDetector, run `bin/console` for an interactive prompt.
+class IpAddressApi
+  # Outside of Rails, configure Kredis like: 
+  #   Kredis::Connections.connections[:shared] = Redis.new(url: "redis://localhost:6379/0")
+  attr_accessor :prefix, :agent, :cache_only, :ttl
 
-## Installation
+  def initialize(prefix: IpAddressApi.prefix, agent: IpAddressApi.agent, cache_only: false, ttl: 60 * 60 * 24)
+    @cache_only = cache_only
+    @prefix     = prefix
+    @agent      = agent
+    @ttl        = ttl 
+  end
+  
+  def key_name(ip) = "#{@prefix}#{ip}"
+  def hit_counter  = @hit_counter  ||= Kredis.counter("#{prefix}hits")
+  def miss_counter = @miss_counter ||= Kredis.counter("#{prefix}miss")
+  
+  def stats
+    hit  = hit_counter.value
+    miss = miss_counter.value
 
-Install the gem and add to the application's Gemfile by executing:
+    {hit: hit, miss:, total: hit + miss}
+  end
+  def self.stats = IpAddressApi.new.stats
 
-    $ bundle add datacenter_detector
+  def reset_stats
+    hit_counter.reset
+    miss_counter.reset
+  end
+  def self.reset_stats = IpAddressApi.new.reset_stats
 
-If bundler is not being used to manage dependencies, install the gem by executing:
+  def lookup(ip=nil)
+    return {} if ip.nil?
 
-    $ gem install datacenter_detector
+    ip_data = Kredis.json(key_name(ip), expires_in: ttl)
+    
+    if ip_data.value.blank? && cache_only == true
+      miss!
+    elsif ip_data.value.blank? && cache_only == false
+      miss!
+      ip_data.value = JSON.parse( URI.open("https://api.incolumitas.com/?q=#{ip}", "User-Agent" => agent).read)
+      ip_data.value ||= {}
+    else
+      hit!
+    end
+
+    return ip_data.value
+  rescue OpenURI::HTTPError => e
+    puts("IP Address API error looking up IP: #{ip} : #{e.inspect}")
+    return {}
+  end
+
+  def self.prefix = 'IpAddressApi_'
+  def self.agent = "Ruby/#{RUBY_VERSION}"
+  def self.lookup(ip=nil, cache_only: false, agent: nil)
+    IpAddressApi.new(cache_only:, agent:).lookup(ip)
+  end
+
+  private
+  def hit!         = hit_counter.increment
+  def miss!        = miss_counter.increment
+end
+```
 
 ## Usage
 
 ```ruby
-> client = DatacenterDetector::Client.new
-> result = client.query(ip: '1.1.1.1')
+> IpAddressApi.lookup('1.1.1.1')
 > result.is_datacenter
 => false
 > result.name
 => "CLOUDFLARENET, US"
 
-> result = client.query(ip: '52.93.127.126')
+> IpAddressApi.lookup(ip: '52.93.127.126')
 > result.is_datacenter
 => true
 > result.name
 => "Amazon AWS"
 
-> result = client.query(ip: '27.32.20.97' )
+> IpAddressApi.lookup(ip: '27.32.20.97' )
 > result.is_datacenter
 => false
 > result.name
@@ -46,21 +98,6 @@ The cache records its hitrate:
 > c.hitrate
 => 0.6829268292682927
 ```
-
-## TODO
- - Networks are cached by finding the first and last IP in the range and converting them to integers. This library does not detect overlapping networks.
- - Move the remaining client / connect code into the Client class.
-
-## Development
-
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/datacenter_detector.
-
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
