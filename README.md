@@ -55,7 +55,7 @@ class IpAddressApi
       miss!
     elsif ip_data.value.blank? && cache_only == false
       miss!
-      ip_data.value = JSON.parse( URI.open("https://api.incolumitas.com/?q=#{ip}", "User-Agent" => agent).read)
+      ip_data.value = JSON.parse( URI.open("https://ipapi.is/json/?q=#{ip}", "User-Agent" => agent).read)
       ip_data.value ||= {}
     else
       hit!
